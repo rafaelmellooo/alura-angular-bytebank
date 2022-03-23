@@ -1,18 +1,15 @@
 import { Injectable } from '@angular/core';
-
-export interface Transferencia {
-  valor: number;
-  destino: string;
-  data?: Date;
-};
+import { HttpClient } from '@angular/common/http';
+import { Transferencia } from '../models/transferencia.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransferenciaService {
-  transferencias: Transferencia[];
+  private transferencias: Transferencia[];
+  private url = 'http://localhost:3000/transferencias';
 
-  constructor() {
+  constructor(private httpClient: HttpClient) {
     this.transferencias = [];
   }
 
@@ -20,8 +17,13 @@ export class TransferenciaService {
     return this.transferencias;
   }
 
+  obterTransferencias() {
+    return this.httpClient.get<Transferencia[]>(this.url);
+  }
+
   adicionarTransferencia(transferencia: Transferencia) {
     transferencia.data = new Date();
-    this.transferencias.push(transferencia);
+
+    return this.httpClient.post<Transferencia>(this.url, transferencia);
   }
 }
